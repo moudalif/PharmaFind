@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:m="clr-namespace:PharmaFind.Models"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.PharmacyDashboardPage"
+                x:DataType="vm:PharmacyDashboardViewModel"
+                Title="Tableau de bord">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Quitter" Command="{Binding LogoutCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <RefreshView Command="{Binding RetryCommand}" IsRefreshing="{Binding IsBusy, Mode=OneWay}">
+            <ScrollView>
+                <VerticalStackLayout Padding="16" Spacing="14">
+
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="{Binding Pharmacy.Name}" Style="{StaticResource H1}" FontSize="22" />
+                        <HorizontalStackLayout Spacing="8">
+                            <c:Badge Value="{Binding Pharmacy.Status}" />
+                            <Label Text="{Binding Pharmacy.LocationText}" Style="{StaticResource Caption}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Indicateurs -->
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                        <Border Style="{StaticResource CardTight}">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding TotalCount}" Style="{StaticResource KpiValue}" />
+                                <Label Text="Références en stock" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource CardTight}">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding AvailableCount}" Style="{StaticResource KpiValue}" TextColor="{StaticResource Success}" />
+                                <Label Text="Disponibles" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="1" Style="{StaticResource CardTight}">
+                            <Border.GestureRecognizers><TapGestureRecognizer Command="{Binding OpenStockCommand}" /></Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding LowCount}" Style="{StaticResource KpiValue}" TextColor="{StaticResource Warning}" />
+                                <Label Text="Stock faible" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource CardTight}">
+                            <Border.GestureRecognizers><TapGestureRecognizer Command="{Binding OpenStockCommand}" /></Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding OutCount}" Style="{StaticResource KpiValue}" TextColor="{StaticResource Danger}" />
+                                <Label Text="Ruptures" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Fraîcheur des données -->
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="10">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Fraîcheur de vos données" Style="{StaticResource H3}" />
+                                <Label Grid.Column="1" Text="{Binding StaleCount, StringFormat='{0} à revoir'}" Style="{StaticResource Caption}" TextColor="{StaticResource Warning}" />
+                            </Grid>
+                            <ProgressBar Progress="{Binding FreshRatio}" HeightRequest="8" />
+                            <Label Text="{Binding FreshText}" Style="{StaticResource Caption}" />
+                            <Label Style="{StaticResource BodySecondary}" FontSize="13"
+                                   Text="Les visiteurs voient la date de votre dernière mise à jour. Au-delà de 72 h, un avertissement leur conseille d'appeler." />
+                            <Button Text="Confirmer tous les stocks inchangés" Style="{StaticResource SecondaryButton}" Command="{Binding ConfirmAllCommand}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- À traiter -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="À traiter" Style="{StaticResource SectionTitle}" />
+                        <Button Grid.Column="1" Text="Tout le stock" Style="{StaticResource TextButton}" Command="{Binding OpenStockCommand}" />
+                    </Grid>
+                    <Border Style="{StaticResource Card}" Padding="0">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Attention}">
+                            <BindableLayout.EmptyView>
+                                <Label Text="Rien à signaler : votre stock est à jour." Style="{StaticResource BodySecondary}" Padding="16" />
+                            </BindableLayout.EmptyView>
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="m:StockItem">
+                                    <VerticalStackLayout>
+                                        <Grid Padding="16,12" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+                                            <Grid.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PharmacyDashboardViewModel}}, Path=EditItemCommand}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Grid.GestureRecognizers>
+                                            <Label Text="{Binding Medicine.DisplayName}" FontAttributes="Bold" />
+                                            <Label Grid.Column="1" Text="{Binding QuantityText}" FontSize="13" />
+                                            <HorizontalStackLayout Grid.Row="1" Spacing="8">
+                                                <c:Badge Value="{Binding Status}" />
+                                                <Label Text="{Binding UpdatedText}" FontSize="12" VerticalOptions="Center"
+                                                       TextColor="{Binding Freshness, Converter={StaticResource FreshnessColor}}" />
+                                            </HorizontalStackLayout>
+                                            <Label Grid.Row="1" Grid.Column="1" Text="Modifier" TextColor="{StaticResource Primary}" FontAttributes="Bold" FontSize="13" />
+                                        </Grid>
+                                        <BoxView Style="{StaticResource Divider}" />
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Alertes récentes -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Alertes non lues" Style="{StaticResource SectionTitle}" />
+                        <Label Grid.Column="1" Text="{Binding OpenReports, StringFormat='{0} signalement(s) ouvert(s)'}" Style="{StaticResource Caption}" VerticalOptions="Center" />
+                    </Grid>
+                    <Border Style="{StaticResource Card}" Padding="0">
+                        <Border.GestureRecognizers><TapGestureRecognizer Command="{Binding OpenNotificationsCommand}" /></Border.GestureRecognizers>
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding RecentNotifications}">
+                            <BindableLayout.EmptyView>
+                                <Label Text="Aucune nouvelle alerte." Style="{StaticResource BodySecondary}" Padding="16" />
+                            </BindableLayout.EmptyView>
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="m:AppNotification">
+                                    <Grid Padding="16,12" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                        <Image Source="{Binding Icon}" Style="{StaticResource ListIcon}" VerticalOptions="Start" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                            <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                            <Label Text="{Binding Message}" Style="{StaticResource BodySecondary}" FontSize="13" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Button Text="Ajouter un médicament du catalogue" ImageSource="ic_plus.png" Style="{StaticResource OutlineButton}" Command="{Binding OpenCatalogCommand}" Margin="0,0,0,16" />
+                </VerticalStackLayout>
+            </ScrollView>
+        </RefreshView>
+
+        <!-- Compte en attente de validation -->
+        <VerticalStackLayout IsVisible="{Binding IsPending}" BackgroundColor="{StaticResource Background}" Padding="32" Spacing="12">
+            <Image Source="state_pending.png" WidthRequest="64" HeightRequest="64" Margin="0,40,0,0" />
+            <Label Text="Validation en cours" Style="{StaticResource H2}" HorizontalTextAlignment="Center" />
+            <Label Style="{StaticResource BodySecondary}" HorizontalTextAlignment="Center"
+                   Text="L'équipe PharmaFind vérifie vos justificatifs. Le tableau de bord et la gestion des stocks seront accessibles dès la validation de votre établissement." />
+            <Label Text="{Binding Pharmacy.Name}" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+            <Button Text="Se déconnecter" Style="{StaticResource OutlineButton}" Command="{Binding LogoutCommand}" />
+        </VerticalStackLayout>
+
+        <!-- Compte suspendu ou refusé -->
+        <VerticalStackLayout IsVisible="{Binding IsBlocked}" BackgroundColor="{StaticResource Background}" Padding="32" Spacing="12">
+            <Image Source="state_error.png" WidthRequest="64" HeightRequest="64" Margin="0,40,0,0" />
+            <Label Text="Accès suspendu" Style="{StaticResource H2}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding Pharmacy.StatusReason}" Style="{StaticResource BodySecondary}" HorizontalTextAlignment="Center" />
+            <Label Text="Contactez l'administration PharmaFind pour plus d'informations." Style="{StaticResource Caption}" HorizontalTextAlignment="Center" />
+            <Button Text="Se déconnecter" Style="{StaticResource OutlineButton}" Command="{Binding LogoutCommand}" />
+        </VerticalStackLayout>
+
+        <c:StateView State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}" />
+    </Grid>
+</views:BasePage>

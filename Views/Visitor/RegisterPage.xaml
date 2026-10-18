@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                x:Class="PharmaFind.Views.RegisterPage"
+                x:DataType="vm:RegisterViewModel"
+                Title="Créer un compte">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="14" MaximumWidthRequest="480">
+            <Label Text="Compte visiteur" Style="{StaticResource H1}" />
+            <Label Style="{StaticResource BodySecondary}" Text="Gratuit et facultatif : il sert uniquement à enregistrer vos favoris et votre historique." />
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Nom" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Text="{Binding Name}" Placeholder="Votre nom" Keyboard="Text" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Courriel" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Text="{Binding Email}" Placeholder="nom@exemple.cm" Keyboard="Email" IsSpellCheckEnabled="False" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Mot de passe" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Text="{Binding Password}" IsPassword="True" Placeholder="8 caractères minimum" />
+                </Border>
+                <Label Text="Au moins 8 caractères, dont une lettre et un chiffre." Style="{StaticResource Caption}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Confirmation" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Text="{Binding Confirmation}" IsPassword="True" Placeholder="Répétez le mot de passe" />
+                </Border>
+            </VerticalStackLayout>
+
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+                <CheckBox IsChecked="{Binding AcceptsTerms}" VerticalOptions="Start" />
+                <Label Grid.Column="1" FontSize="14" VerticalOptions="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="J'accepte la " />
+                            <Span Text="politique de confidentialité" TextColor="{StaticResource Primary}" FontAttributes="Bold" TextDecorations="Underline">
+                                <Span.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenPrivacyCommand}" />
+                                </Span.GestureRecognizers>
+                            </Span>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </Grid>
+
+            <Border Style="{StaticResource DangerBanner}" IsVisible="{Binding ErrorText, Converter={StaticResource HasValue}}">
+                <Label Text="{Binding ErrorText}" Style="{StaticResource ErrorLabel}" />
+            </Border>
+
+            <Button Text="Créer mon compte" Command="{Binding RegisterCommand}" IsEnabled="{Binding IsWorking, Converter={StaticResource InvertedBool}}" />
+            <ActivityIndicator IsRunning="{Binding IsWorking}" IsVisible="{Binding IsWorking}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</views:BasePage>

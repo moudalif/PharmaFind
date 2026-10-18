@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:m="clr-namespace:PharmaFind.Models"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.PharmacyDetailPage"
+                x:DataType="vm:PharmacyDetailViewModel"
+                Title="Pharmacie">
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="14">
+
+                <!-- Identité -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Label Text="{Binding Pharmacy.Name}" Style="{StaticResource H1}" FontSize="22" />
+                            <ImageButton Grid.Column="1" BackgroundColor="Transparent" WidthRequest="44" HeightRequest="44" Padding="10"
+                                         Command="{Binding ToggleFavoriteCommand}" VerticalOptions="Start"
+                                         SemanticProperties.Description="Ajouter ou retirer des favoris">
+                                <ImageButton.Triggers>
+                                    <DataTrigger TargetType="ImageButton" Binding="{Binding IsFavorite}" Value="True">
+                                        <Setter Property="Source" Value="ic_heart_filled.png" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="ImageButton" Binding="{Binding IsFavorite}" Value="False">
+                                        <Setter Property="Source" Value="ic_heart.png" />
+                                    </DataTrigger>
+                                </ImageButton.Triggers>
+                            </ImageButton>
+                        </Grid>
+                        <HorizontalStackLayout Spacing="8">
+                            <c:Badge Value="{Binding Pharmacy.IsOpenNow}" />
+                            <c:Badge Value="{Binding Pharmacy.IsOnDuty}" TextOverride="De garde" IsVisible="{Binding Pharmacy.IsOnDuty}" />
+                            <Label Text="{Binding DistanceText}" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+
+                        <BoxView Style="{StaticResource Divider}" />
+
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                            <Image Source="ic_location.png" Style="{StaticResource ListIcon}" VerticalOptions="Start" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="{Binding Pharmacy.FullLocationText}" />
+                                <Label Text="{Binding Pharmacy.Landmark}" Style="{StaticResource BodySecondary}" FontSize="13" />
+                                <Label Text="Coordonnées GPS non renseignées : fiez-vous au repère." Style="{StaticResource Caption}" TextColor="{StaticResource Warning}"
+                                       IsVisible="{Binding Pharmacy.HasCoordinates, Converter={StaticResource InvertedBool}}" />
+                            </VerticalStackLayout>
+
+                            <Image Grid.Row="1" Source="ic_phone.png" Style="{StaticResource ListIcon}" />
+                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Pharmacy.PhoneDisplay}" VerticalOptions="Center" />
+
+                            <Image Grid.Row="2" Source="ic_clock.png" Style="{StaticResource ListIcon}" />
+                            <Label Grid.Row="2" Grid.Column="1" Text="{Binding Pharmacy.HoursText}" VerticalOptions="Center" />
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,4,0,0">
+                            <Button Text="Appeler" Command="{Binding CallCommand}" ImageSource="ic_phone_green.png" Style="{StaticResource SecondaryButton}" />
+                            <Button Grid.Column="1" Text="Itinéraire" Command="{Binding RouteCommand}" ImageSource="ic_route_blue.png" Style="{StaticResource SecondaryButton}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Médicament recherché -->
+                <Border Style="{StaticResource Card}" Stroke="{StaticResource Primary}" StrokeThickness="1.5"
+                        IsVisible="{Binding Highlighted, Converter={StaticResource HasValue}}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Médicament recherché" Style="{StaticResource SectionTitle}" Margin="0" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding Highlighted.Medicine.DisplayName}" Style="{StaticResource H3}" />
+                                <Label Text="{Binding Highlighted.Medicine.Details}" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="1" Text="{Binding Highlighted.PriceText}" FontSize="17" FontAttributes="Bold" VerticalOptions="Center" />
+                        </Grid>
+                        <HorizontalStackLayout Spacing="8">
+                            <c:Badge Value="{Binding Highlighted.Status}" />
+                            <c:Badge Value="{Binding Highlighted.Freshness}" />
+                        </HorizontalStackLayout>
+                        <Label FontSize="13" TextColor="{StaticResource TextSecondary}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Stock déclaré le " />
+                                    <Span Text="{Binding Highlighted.UpdatedFullText}" FontAttributes="Bold" />
+                                    <Span Text=". Prix indicatif, à confirmer au comptoir." />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Border Style="{StaticResource WarningBanner}" IsVisible="{Binding Highlighted.NeedsUpdate}">
+                            <Label FontSize="13" Text="Cette information n'est pas récente. Appelez la pharmacie pour vérifier la disponibilité." />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Stock déclaré -->
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Stock déclaré" Style="{StaticResource SectionTitle}" />
+                    <Label Grid.Column="1" Text="{Binding StockCountText}" Style="{StaticResource Caption}" VerticalOptions="Center" />
+                </Grid>
+                <Border Style="{StaticResource InputBorder}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                        <Image Source="ic_search.png" WidthRequest="18" HeightRequest="18" />
+                        <Entry Grid.Column="1" Text="{Binding StockFilter}" Placeholder="Filtrer les médicaments de cette pharmacie" />
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource Card}" Padding="0">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Stock}">
+                        <BindableLayout.EmptyView>
+                            <Label Text="Aucun autre médicament déclaré." Style="{StaticResource BodySecondary}" Padding="16" />
+                        </BindableLayout.EmptyView>
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="m:StockItem">
+                                <VerticalStackLayout>
+                                    <Grid Padding="16,12" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="4">
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PharmacyDetailViewModel}}, Path=OpenMedicineCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Grid.GestureRecognizers>
+                                        <Label Text="{Binding Medicine.DisplayName}" FontAttributes="Bold" />
+                                        <Label Grid.Column="1" Text="{Binding PriceText}" FontAttributes="Bold" />
+                                        <HorizontalStackLayout Grid.Row="1" Spacing="8">
+                                            <c:Badge Value="{Binding Status}" />
+                                            <Label Text="{Binding UpdatedText}" FontSize="12" VerticalOptions="Center"
+                                                   TextColor="{Binding Freshness, Converter={StaticResource FreshnessColor}}" />
+                                        </HorizontalStackLayout>
+                                    </Grid>
+                                    <BoxView Style="{StaticResource Divider}" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Signalement et avertissement -->
+                <Button Text="Signaler une information erronée" Style="{StaticResource OutlineButton}" ImageSource="ic_flag.png" Command="{Binding ReportCommand}" />
+                <Label Style="{StaticResource Caption}" HorizontalTextAlignment="Center" Margin="8,0,8,16"
+                       Text="Stocks et prix déclarés par la pharmacie. PharmaFind ne vend pas de médicaments et ne remplace pas l'avis d'un pharmacien ou d'un médecin." />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <c:StateView State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}" />
+    </Grid>
+</views:BasePage>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell x:Class="PharmaFind.AppShell"
+       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:PharmaFind.Views"
+       FlyoutBehavior="Disabled"
+       Shell.BackgroundColor="{StaticResource Primary}"
+       Shell.ForegroundColor="{StaticResource TextOnPrimary}"
+       Shell.TitleColor="{StaticResource TextOnPrimary}"
+       Shell.TabBarBackgroundColor="{StaticResource Surface}"
+       Shell.TabBarForegroundColor="{StaticResource Primary}"
+       Shell.TabBarTitleColor="{StaticResource Primary}"
+       Shell.TabBarUnselectedColor="{StaticResource TextMuted}">
+
+    <!-- Écran de lancement -->
+    <ShellContent Route="launch" Shell.NavBarIsVisible="False" Shell.TabBarIsVisible="False"
+                  ContentTemplate="{DataTemplate views:LaunchPage}" />
+
+    <!-- ===== Espace visiteur (sans inscription obligatoire) ===== -->
+    <TabBar Route="visitor">
+        <Tab Title="Accueil" Icon="tab_home.png" Route="home">
+            <ShellContent ContentTemplate="{DataTemplate views:HomePage}" />
+        </Tab>
+        <Tab Title="Carte" Icon="tab_map.png" Route="map">
+            <ShellContent ContentTemplate="{DataTemplate views:MapPage}" />
+        </Tab>
+        <Tab Title="Favoris" Icon="tab_heart.png" Route="favorites">
+            <ShellContent ContentTemplate="{DataTemplate views:FavoritesPage}" />
+        </Tab>
+        <Tab Title="Profil" Icon="tab_user.png" Route="profile">
+            <ShellContent ContentTemplate="{DataTemplate views:ProfilePage}" />
+        </Tab>
+    </TabBar>
+
+    <!-- ===== Espace pharmacie partenaire ===== -->
+    <TabBar Route="pharmacy">
+        <Tab Title="Tableau" Icon="tab_dashboard.png" Route="phdashboard">
+            <ShellContent ContentTemplate="{DataTemplate views:PharmacyDashboardPage}" />
+        </Tab>
+        <Tab Title="Stocks" Icon="tab_box.png" Route="phstock">
+            <ShellContent ContentTemplate="{DataTemplate views:StockPage}" />
+        </Tab>
+        <Tab Title="Catalogue" Icon="tab_list.png" Route="phcatalog">
+            <ShellContent ContentTemplate="{DataTemplate views:CatalogPage}" />
+        </Tab>
+        <Tab Title="Alertes" Icon="tab_bell.png" Route="phnotifications">
+            <ShellContent ContentTemplate="{DataTemplate views:NotificationsPage}" />
+        </Tab>
+        <Tab Title="Établissement" Icon="tab_store.png" Route="phinfo">
+            <ShellContent ContentTemplate="{DataTemplate views:PharmacyInfoPage}" />
+        </Tab>
+    </TabBar>
+
+    <!-- ===== Espace administrateur ===== -->
+    <TabBar Route="admin">
+        <Tab Title="Tableau" Icon="tab_dashboard.png" Route="addashboard">
+            <ShellContent ContentTemplate="{DataTemplate views:AdminDashboardPage}" />
+        </Tab>
+        <Tab Title="Pharmacies" Icon="tab_shield.png" Route="adpharmacies">
+            <ShellContent ContentTemplate="{DataTemplate views:AdminPharmaciesPage}" />
+        </Tab>
+        <Tab Title="Médicaments" Icon="tab_pill.png" Route="admedicines">
+            <ShellContent ContentTemplate="{DataTemplate views:AdminMedicinesPage}" />
+        </Tab>
+        <Tab Title="Signalements" Icon="tab_flag.png" Route="adreports">
+            <ShellContent ContentTemplate="{DataTemplate views:AdminReportsPage}" />
+        </Tab>
+        <Tab Title="Plus" Icon="tab_more.png" Route="admore">
+            <ShellContent ContentTemplate="{DataTemplate views:AdminMorePage}" />
+        </Tab>
+    </TabBar>
+</Shell>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.AdminMedicineEditPage"
+                x:DataType="vm:AdminMedicineEditViewModel"
+                Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Nom commercial *" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding BrandName}" Placeholder="Ex. : Doliprane" /></Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Dénomination commune internationale (DCI) *" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding Inn}" Placeholder="Ex. : Paracétamol" /></Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Dosage *" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding Dosage}" Placeholder="Ex. : 500 mg" /></Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Forme *" Style="{StaticResource FieldLabel}" VerticalOptions="Center" />
+                                <Button Grid.Column="1" Text="+ Nouvelle" Style="{StaticResource TextButton}" FontSize="13" Command="{Binding AddFormCommand}" />
+                            </Grid>
+                            <Border Style="{StaticResource InputBorder}"><Picker ItemsSource="{Binding Forms}" SelectedItem="{Binding Form}" Title="Choisir une forme" /></Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Catégorie" Style="{StaticResource FieldLabel}" VerticalOptions="Center" />
+                                <Button Grid.Column="1" Text="+ Nouvelle" Style="{StaticResource TextButton}" FontSize="13" Command="{Binding AddCategoryCommand}" />
+                            </Grid>
+                            <Border Style="{StaticResource InputBorder}"><Picker ItemsSource="{Binding Categories}" SelectedItem="{Binding Category}" Title="Choisir une catégorie" /></Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Conditions de délivrance (vérifiées)" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}"><Picker ItemsSource="{Binding DeliveryOptions}" SelectedItem="{Binding Delivery}" Title="Choisir" /></Border>
+                            <Label Style="{StaticResource Caption}" Text="À confirmer selon la réglementation camerounaise avant publication. En cas de doute, laissez « À vérifier »." />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Description informative" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}" Padding="12,6">
+                                <Editor Text="{Binding Description}" HeightRequest="100" Placeholder="Usage général, sans posologie ni conseil de prescription." />
+                            </Border>
+                        </VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Actif dans le catalogue" />
+                                <Label Text="Désactivé : invisible des visiteurs et des pharmacies" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding IsActive}" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource DangerBanner}" IsVisible="{Binding ErrorText, Converter={StaticResource HasValue}}">
+                    <Label Text="{Binding ErrorText}" Style="{StaticResource ErrorLabel}" />
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" BackgroundColor="{StaticResource Surface}" StrokeThickness="0" Padding="16,10,16,16">
+            <Button Text="Enregistrer" Command="{Binding SaveCommand}" IsEnabled="{Binding IsWorking, Converter={StaticResource InvertedBool}}" />
+        </Border>
+
+        <c:StateView Grid.RowSpan="2" State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}" />
+    </Grid>
+</views:BasePage>

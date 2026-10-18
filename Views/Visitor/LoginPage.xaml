@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                x:Class="PharmaFind.Views.LoginPage"
+                x:DataType="vm:LoginViewModel"
+                Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24,32" Spacing="16" MaximumWidthRequest="480">
+            <Border Style="{StaticResource IconCircle}" WidthRequest="64" HeightRequest="64" Padding="14" HorizontalOptions="Center">
+                <Image Source="logo.png" />
+            </Border>
+            <Label Text="{Binding Heading}" Style="{StaticResource H1}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding Subheading}" Style="{StaticResource BodySecondary}" HorizontalTextAlignment="Center" />
+
+            <VerticalStackLayout Spacing="6" Margin="0,8,0,0">
+                <Label Text="Courriel" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBorder}">
+                    <Entry Text="{Binding Email}" Keyboard="Email" Placeholder="nom@exemple.cm" IsSpellCheckEnabled="False" />
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Mot de passe" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBorder}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Entry Text="{Binding Password}" IsPassword="{Binding IsPasswordHidden}" Placeholder="••••••••" ReturnCommand="{Binding LoginCommand}" />
+                        <Button Grid.Column="1" Text="Afficher" Style="{StaticResource TextButton}" FontSize="13" Command="{Binding TogglePasswordCommand}">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding IsPasswordHidden}" Value="False">
+                                    <Setter Property="Text" Value="Masquer" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource DangerBanner}" IsVisible="{Binding ErrorText, Converter={StaticResource HasValue}}">
+                <Label Text="{Binding ErrorText}" Style="{StaticResource ErrorLabel}" />
+            </Border>
+
+            <Button Text="Se connecter" Command="{Binding LoginCommand}" IsEnabled="{Binding IsWorking, Converter={StaticResource InvertedBool}}" />
+            <ActivityIndicator IsRunning="{Binding IsWorking}" IsVisible="{Binding IsWorking}" />
+            <Button Text="Mot de passe oublié ?" Style="{StaticResource TextButton}" Command="{Binding ForgotPasswordCommand}" />
+
+            <BoxView Style="{StaticResource Divider}" Margin="0,8" />
+
+            <Button Text="Créer un compte gratuit" Style="{StaticResource OutlineButton}" Command="{Binding RegisterCommand}" IsVisible="{Binding IsVisitorSpace}" />
+            <Button Text="Inscrire ma pharmacie" Style="{StaticResource OutlineButton}" Command="{Binding RegisterCommand}" IsVisible="{Binding IsPharmacySpace}" />
+
+            <Border Style="{StaticResource InfoBanner}">
+                <Label Text="{Binding DemoHint}" FontSize="12" TextColor="{StaticResource TextSecondary}" />
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</views:BasePage>

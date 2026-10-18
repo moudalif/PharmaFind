@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                x:Class="PharmaFind.Views.AdminPharmacyReviewPage"
+                x:DataType="vm:AdminPharmacyReviewViewModel"
+                Title="Examen de la pharmacie">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="{Binding Pharmacy.Name}" Style="{StaticResource H2}" />
+                            <c:Badge Grid.Column="1" Value="{Binding Pharmacy.Status}" VerticalOptions="Start" />
+                        </Grid>
+                        <Label Text="{Binding Pharmacy.StatusReason, StringFormat='Motif : {0}'}" Style="{StaticResource BodySecondary}" FontSize="13"
+                               IsVisible="{Binding Pharmacy.StatusReason, Converter={StaticResource HasValue}}" />
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="10">
+                            <Label Text="Autorisation" Style="{StaticResource FieldLabel}" />
+                            <Label Grid.Column="1" Text="{Binding Pharmacy.LicenseNumber}" />
+                            <Label Grid.Row="1" Text="Titulaire" Style="{StaticResource FieldLabel}" />
+                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Pharmacy.Pharmacist}" />
+                            <Label Grid.Row="2" Text="Adresse" Style="{StaticResource FieldLabel}" />
+                            <VerticalStackLayout Grid.Row="2" Grid.Column="1">
+                                <Label Text="{Binding Pharmacy.FullLocationText}" />
+                                <Label Text="{Binding Pharmacy.Landmark}" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Row="3" Text="GPS" Style="{StaticResource FieldLabel}" />
+                            <Label Grid.Row="3" Grid.Column="1">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Pharmacy.HasCoordinates}" Value="True">
+                                        <Setter Property="Text" Value="Renseigné" />
+                                        <Setter Property="TextColor" Value="{StaticResource Success}" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Pharmacy.HasCoordinates}" Value="False">
+                                        <Setter Property="Text" Value="Non renseigné" />
+                                        <Setter Property="TextColor" Value="{StaticResource Warning}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Label Grid.Row="4" Text="Contact" Style="{StaticResource FieldLabel}" />
+                            <VerticalStackLayout Grid.Row="4" Grid.Column="1">
+                                <Label Text="{Binding Pharmacy.PhoneDisplay}" TextColor="{StaticResource Secondary}">
+                                    <Label.GestureRecognizers><TapGestureRecognizer Command="{Binding CallCommand}" /></Label.GestureRecognizers>
+                                </Label>
+                                <Label Text="{Binding Pharmacy.Email}" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Row="5" Text="Demande" Style="{StaticResource FieldLabel}" />
+                            <Label Grid.Row="5" Grid.Column="1" Text="{Binding Pharmacy.RequestedAt, StringFormat='{0:dd/MM/yyyy}'}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Justificatifs" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}" Padding="0">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Documents}">
+                        <BindableLayout.EmptyView>
+                            <Label Text="Aucun justificatif fourni." Style="{StaticResource BodySecondary}" Padding="16" TextColor="{StaticResource Danger}" />
+                        </BindableLayout.EmptyView>
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="sys:String">
+                                <Grid Padding="16,12" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AdminPharmacyReviewViewModel}}, Path=OpenDocumentCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                    <Image Source="ic_doc.png" Style="{StaticResource ListIcon}" />
+                                    <Label Grid.Column="1" Text="{Binding .}" VerticalOptions="Center" />
+                                    <Label Grid.Column="2" Text="Ouvrir" TextColor="{StaticResource Primary}" FontAttributes="Bold" FontSize="13" VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Activité" Style="{StaticResource SectionTitle}" />
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                    <Border Style="{StaticResource CardTight}">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding StockCount}" Style="{StaticResource KpiValue}" FontSize="22" />
+                            <Label Text="Lignes de stock" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource CardTight}">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding StaleCount}" Style="{StaticResource KpiValue}" FontSize="22" TextColor="{StaticResource Warning}" />
+                            <Label Text="Données anciennes" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource CardTight}">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding ReportCount}" Style="{StaticResource KpiValue}" FontSize="22" TextColor="{StaticResource Danger}" />
+                            <Label Text="Signalements" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+                <Label Style="{StaticResource Caption}" Margin="0,0,0,8"
+                       Text="Chaque décision est enregistrée dans le journal d'audit. Les autorisations sont vérifiées côté serveur." />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Actions selon le statut -->
+        <Border Grid.Row="1" BackgroundColor="{StaticResource Surface}" StrokeThickness="0" Padding="16,10,16,16">
+            <VerticalStackLayout Spacing="8">
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding CanRefuse}">
+                    <Button Text="Refuser" Style="{StaticResource DangerButton}" Command="{Binding RefuseCommand}" />
+                    <Button Grid.Column="1" Text="Valider" Command="{Binding ValidateCommand}" />
+                </Grid>
+                <Button Text="Valider" Command="{Binding ValidateCommand}" IsVisible="{Binding CanValidateOnly}" />
+                <Button Text="Suspendre la pharmacie" Style="{StaticResource DangerButton}" Command="{Binding SuspendCommand}" IsVisible="{Binding CanSuspend}" />
+                <Button Text="Réactiver la pharmacie" Command="{Binding ReactivateCommand}" IsVisible="{Binding CanReactivate}" />
+            </VerticalStackLayout>
+        </Border>
+
+        <c:StateView Grid.RowSpan="2" State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}" />
+    </Grid>
+</views:BasePage>

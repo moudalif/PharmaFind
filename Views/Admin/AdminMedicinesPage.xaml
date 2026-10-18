@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:m="clr-namespace:PharmaFind.Models"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.AdminMedicinesPage"
+                x:DataType="vm:AdminMedicinesViewModel"
+                Title="Référentiel des médicaments">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Ajouter" Command="{Binding AddCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <VerticalStackLayout Padding="16,16,16,4" Spacing="10">
+            <Border Style="{StaticResource InputBorder}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                    <Image Source="ic_search.png" Style="{StaticResource ListIcon}" />
+                    <Entry Grid.Column="1" Text="{Binding FilterText}" Placeholder="Nom commercial, DCI ou catégorie" />
+                </Grid>
+            </Border>
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Afficher les médicaments désactivés" FontSize="14" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding ShowInactive}" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <Label Grid.Row="1" Text="{Binding CountText}" Style="{StaticResource Caption}" Margin="20,0,16,6" />
+
+        <Grid Grid.Row="2">
+            <CollectionView ItemsSource="{Binding Items}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:Medicine">
+                        <Grid Padding="16,5">
+                            <Border Style="{StaticResource CardTight}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsActive}" Value="False">
+                                        <Setter Property="Opacity" Value="0.55" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AdminMedicinesViewModel}}, Path=EditCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding DisplayName}" Style="{StaticResource H3}" />
+                                        <Label Text="{Binding Details}" Style="{StaticResource Caption}" />
+                                        <HorizontalStackLayout Spacing="8" Margin="0,3,0,0">
+                                            <c:Badge Value="{Binding Delivery}" />
+                                            <Label Text="{Binding Category}" Style="{StaticResource Caption}" VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                    <Image Grid.Column="1" Source="ic_chevron.png" WidthRequest="16" HeightRequest="16" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <c:StateView State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}"
+                         EmptyTitle="Aucun médicament" EmptyMessage="Aucun médicament ne correspond à cette recherche."
+                         EmptyActionText="Ajouter un médicament" EmptyActionCommand="{Binding AddCommand}" />
+        </Grid>
+    </Grid>
+</views:BasePage>

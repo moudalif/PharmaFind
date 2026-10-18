@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PharmaFind.Views.PrivacyPage"
+             Title="Confidentialité">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+            <Label Text="Vos données sur PharmaFind" Style="{StaticResource H1}" />
+            <Label Style="{StaticResource Caption}" Text="Texte provisoire de maquette. La politique définitive sera rédigée selon les règles camerounaises applicables aux données personnelles." />
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Localisation" Style="{StaticResource H3}" />
+                    <Label Style="{StaticResource BodySecondary}" Text="Demandée seulement quand vous cherchez des pharmacies proches. Elle sert au calcul de distance et n'est pas conservée. Vous pouvez toujours saisir un quartier à la place." />
+                </VerticalStackLayout>
+            </Border>
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Historique de recherche" Style="{StaticResource H3}" />
+                    <Label Style="{StaticResource BodySecondary}" Text="Conservé uniquement si vous l'activez. Vous pouvez l'effacer à tout moment depuis votre profil." />
+                </VerticalStackLayout>
+            </Border>
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Compte" Style="{StaticResource H3}" />
+                    <Label Style="{StaticResource BodySecondary}" Text="Facultatif. Nous enregistrons votre nom, votre courriel et vos pharmacies favorites. Le mot de passe est stocké sous forme hachée, jamais en clair." />
+                </VerticalStackLayout>
+            </Border>
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Informations médicales" Style="{StaticResource H3}" />
+                    <Label Style="{StaticResource BodySecondary}" Text="PharmaFind ne collecte aucune ordonnance ni donnée de santé. L'application ne vend pas de médicaments et ne donne aucun conseil médical." />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:m="clr-namespace:PharmaFind.Models"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.HistoryPage"
+                x:DataType="vm:HistoryViewModel"
+                Title="Historique des recherches">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Effacer" Command="{Binding ClearCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Style="{StaticResource Card}" Margin="16,16,16,8">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="Conserver mon historique" FontAttributes="Bold" />
+                    <Label Text="Stocké uniquement sur cet appareil. Votre position n'est jamais enregistrée." Style="{StaticResource Caption}" />
+                </VerticalStackLayout>
+                <Switch Grid.Column="1" IsToggled="{Binding KeepHistory}" VerticalOptions="Center" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <CollectionView ItemsSource="{Binding Entries}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:SearchHistoryEntry">
+                        <VerticalStackLayout Padding="16,0">
+                            <Grid Padding="4,14" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HistoryViewModel}}, Path=OpenCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Grid.GestureRecognizers>
+                                <Image Source="ic_history.png" Style="{StaticResource ListIcon}" />
+                                <Label Grid.Column="1" Text="{Binding Query}" VerticalOptions="Center" />
+                                <Label Grid.Column="2" Text="{Binding DateText}" Style="{StaticResource Caption}" VerticalOptions="Center" />
+                            </Grid>
+                            <BoxView Style="{StaticResource Divider}" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <c:StateView State="{Binding State}" EmptyTitle="Aucune recherche"
+                         EmptyMessage="Vos recherches récentes apparaîtront ici si vous choisissez de les conserver." />
+        </Grid>
+    </Grid>
+</views:BasePage>

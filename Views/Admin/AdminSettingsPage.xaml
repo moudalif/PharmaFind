@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                x:Class="PharmaFind.Views.AdminSettingsPage"
+                x:DataType="vm:AdminSettingsViewModel"
+                Title="Paramètres">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Label Text="Fiabilité des stocks" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="*,90" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Mise à jour récente" FontAttributes="Bold" />
+                            <Label Text="En heures. En dessous : « À jour »." Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1" Style="{StaticResource InputBorder}"><Entry Text="{Binding FreshHours}" Keyboard="Numeric" HorizontalTextAlignment="Center" /></Border>
+                    </Grid>
+                    <Grid ColumnDefinitions="*,90" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Donnée ancienne" FontAttributes="Bold" />
+                            <Label Text="En heures. Au-delà : appel recommandé." Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1" Style="{StaticResource InputBorder}"><Entry Text="{Binding StaleHours}" Keyboard="Numeric" HorizontalTextAlignment="Center" /></Border>
+                    </Grid>
+                    <Grid ColumnDefinitions="*,90" ColumnSpacing="12">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Disponibilité non confirmée" FontAttributes="Bold" />
+                            <Label Text="En jours. Au-delà, le statut devient « Non confirmée »." Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1" Style="{StaticResource InputBorder}"><Entry Text="{Binding UnconfirmedDays}" Keyboard="Numeric" HorizontalTextAlignment="Center" /></Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Recherche" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <Grid ColumnDefinitions="*,110" ColumnSpacing="12">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Rayon par défaut (km)" FontAttributes="Bold" />
+                        <Label Text="Proposé aux visiteurs à l'ouverture" Style="{StaticResource Caption}" />
+                    </VerticalStackLayout>
+                    <Border Grid.Column="1" Style="{StaticResource InputBorder}">
+                        <Picker ItemsSource="{Binding RadiusOptions}" SelectedItem="{Binding DefaultRadius}" />
+                    </Border>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource DangerBanner}" IsVisible="{Binding ErrorText, Converter={StaticResource HasValue}}">
+                <Label Text="{Binding ErrorText}" Style="{StaticResource ErrorLabel}" />
+            </Border>
+
+            <Button Text="Enregistrer" Command="{Binding SaveCommand}" Margin="0,8,0,16" />
+        </VerticalStackLayout>
+    </ScrollView>
+</views:BasePage>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+                x:Class="PharmaFind.Views.AccountRequestPage"
+                x:DataType="vm:AccountRequestViewModel"
+                Title="Inscrire ma pharmacie">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+            <Border Style="{StaticResource InfoBanner}">
+                <Label FontSize="13" TextColor="{StaticResource TextSecondary}"
+                       Text="Chaque établissement est vérifié par l'équipe PharmaFind avant d'apparaître dans les recherches. Préparez votre autorisation d'exercice." />
+            </Border>
+
+            <Label Text="Établissement" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Nom de la pharmacie *" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding PharmacyName}" Placeholder="Pharmacie…" /></Border>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Numéro d'autorisation d'exploitation *" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding LicenseNumber}" Placeholder="Tel qu'indiqué sur l'autorisation" /></Border>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Pharmacien titulaire *" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding Pharmacist}" Placeholder="Nom et prénom" /></Border>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Contact" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Courriel professionnel *" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding Email}" Keyboard="Email" Placeholder="contact@pharmacie.cm" /></Border>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Téléphone *" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBorder}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <Label Text="+237" FontAttributes="Bold" VerticalOptions="Center" />
+                                <Entry Grid.Column="1" Text="{Binding Phone}" Keyboard="Telephone" Placeholder="6 99 12 34 56" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Adresse" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="12">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Ville *" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBorder}"><Picker ItemsSource="{Binding Cities}" SelectedItem="{Binding City}" Title="Choisir" /></Border>
+                    </VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Arrondissement" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding District}" Placeholder="Douala Ve" /></Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" Spacing="6">
+                            <Label Text="Quartier *" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding Neighborhood}" Placeholder="Makepe" /></Border>
+                        </VerticalStackLayout>
+                    </Grid>
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Repère local" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding Landmark}" Placeholder="Ex. : face au marché, après le carrefour" /></Border>
+                    </VerticalStackLayout>
+                    <Label Style="{StaticResource Caption}" Text="La position GPS exacte pourra être enregistrée depuis l'espace pharmacie après validation." />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Justificatifs *" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Documents}" Spacing="8">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="sys:String">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                    <Image Source="ic_doc.png" Style="{StaticResource ListIcon}" />
+                                    <Label Grid.Column="1" Text="{Binding .}" VerticalOptions="Center" LineBreakMode="MiddleTruncation" />
+                                    <ImageButton Grid.Column="2" Source="ic_close.png" BackgroundColor="Transparent" WidthRequest="32" HeightRequest="32" Padding="7"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AccountRequestViewModel}}, Path=RemoveDocumentCommand}"
+                                                 CommandParameter="{Binding .}" SemanticProperties.Description="Retirer" />
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <Button Text="Ajouter un document" ImageSource="ic_plus.png" Style="{StaticResource OutlineButton}" Command="{Binding AddDocumentCommand}" />
+                    <Label Style="{StaticResource Caption}" Text="Autorisation d'exercice, registre de commerce, photo de la devanture. Dans la maquette, seul le nom du fichier est conservé." />
+                </VerticalStackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+                <CheckBox IsChecked="{Binding Certifies}" VerticalOptions="Start" />
+                <Label Grid.Column="1" FontSize="14" VerticalOptions="Center"
+                       Text="Je certifie être habilité à représenter cet établissement et que les informations fournies sont exactes." />
+            </Grid>
+
+            <Border Style="{StaticResource DangerBanner}" IsVisible="{Binding ErrorText, Converter={StaticResource HasValue}}">
+                <Label Text="{Binding ErrorText}" Style="{StaticResource ErrorLabel}" />
+            </Border>
+
+            <Button Text="Envoyer la demande" Command="{Binding SubmitCommand}" IsEnabled="{Binding IsWorking, Converter={StaticResource InvertedBool}}" Margin="0,0,0,16" />
+        </VerticalStackLayout>
+    </ScrollView>
+</views:BasePage>

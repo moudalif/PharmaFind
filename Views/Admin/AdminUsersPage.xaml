@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:m="clr-namespace:PharmaFind.Models"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.AdminUsersPage"
+                x:DataType="vm:AdminUsersViewModel"
+                Title="Utilisateurs">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <Border Style="{StaticResource InputBorder}" Margin="16,16,16,8">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                <Image Source="ic_search.png" Style="{StaticResource ListIcon}" />
+                <Entry Grid.Column="1" Text="{Binding FilterText}" Placeholder="Nom ou courriel" />
+            </Grid>
+        </Border>
+
+        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8" Padding="16,0,16,8" BindableLayout.ItemsSource="{Binding RoleChips}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="m:FilterChip">
+                        <Border Style="{StaticResource Chip}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                    <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AdminUsersViewModel}}, Path=SelectRoleCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding Label}" FontSize="13">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="TextColor" Value="White" />
+                                        <Setter Property="FontAttributes" Value="Bold" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <Grid Grid.Row="2">
+            <CollectionView ItemsSource="{Binding Items}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:UserAccount">
+                        <Grid Padding="16,5">
+                            <Border Style="{StaticResource CardTight}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AdminUsersViewModel}}, Path=ManageCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Border BackgroundColor="{StaticResource SecondaryLight}" StrokeThickness="0" StrokeShape="RoundRectangle 20" WidthRequest="40" HeightRequest="40">
+                                        <Label Text="{Binding Initials}" FontAttributes="Bold" TextColor="{StaticResource Secondary}" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                        <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                        <Label Text="{Binding Email}" Style="{StaticResource Caption}" />
+                                        <Label Text="{Binding CreatedText}" Style="{StaticResource Caption}" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="2" Spacing="4" HorizontalOptions="End">
+                                        <c:Badge Value="{Binding Role}" HorizontalOptions="End" />
+                                        <c:Badge Value="{Binding Status}" HorizontalOptions="End" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <c:StateView State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}"
+                         EmptyTitle="Aucun utilisateur" EmptyMessage="Aucun compte ne correspond à ce filtre." />
+        </Grid>
+    </Grid>
+</views:BasePage>

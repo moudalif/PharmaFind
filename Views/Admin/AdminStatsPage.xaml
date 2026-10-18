@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:m="clr-namespace:PharmaFind.Models"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.AdminStatsPage"
+                x:DataType="vm:AdminStatsViewModel"
+                Title="Statistiques">
+
+    <ContentPage.Resources>
+        <!-- Barre horizontale : libellé, valeur, proportion -->
+        <DataTemplate x:Key="BarTemplate" x:DataType="m:ChartBar">
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4" Margin="0,0,0,10">
+                <Label Text="{Binding Label}" FontSize="13" LineBreakMode="TailTruncation" />
+                <Label Grid.Column="1" Text="{Binding ValueText}" FontSize="13" FontAttributes="Bold" />
+                <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Progress="{Binding Ratio}" HeightRequest="8" />
+            </Grid>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="14">
+                <Border Style="{StaticResource InfoBanner}">
+                    <Label FontSize="12" TextColor="{StaticResource TextSecondary}" Text="Maquette : chiffres fictifs. Ils seront calculés par l'API à partir des journaux anonymisés." />
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Recherches par jour (7 derniers jours)" Style="{StaticResource H3}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding SearchesPerDay}" BindableLayout.ItemTemplate="{StaticResource BarTemplate}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Médicaments les plus recherchés" Style="{StaticResource H3}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding TopSearched}" BindableLayout.ItemTemplate="{StaticResource BarTemplate}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Pharmacies validées par arrondissement" Style="{StaticResource H3}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding ByDistrict}" BindableLayout.ItemTemplate="{StaticResource BarTemplate}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Fraîcheur des stocks déclarés" Style="{StaticResource H3}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Freshness}" BindableLayout.ItemTemplate="{StaticResource BarTemplate}" />
+                        <Label Style="{StaticResource Caption}" Text="Un taux élevé de données anciennes justifie une relance des pharmacies concernées." />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+        <c:StateView State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}" />
+    </Grid>
+</views:BasePage>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.PharmacyInfoPage"
+                x:DataType="vm:PharmacyInfoViewModel"
+                Title="Mon établissement">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Historique" Command="{Binding OpenHistoryCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="{Binding Name}" Style="{StaticResource H2}" />
+                        <Label Text="{Binding LicenseNumber, StringFormat='Autorisation n° {0}'}" Style="{StaticResource Caption}" />
+                        <Label Style="{StaticResource Caption}" Text="Le nom et le numéro d'autorisation ne sont modifiables que par l'administration." />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Contact" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Téléphone affiché aux visiteurs" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                    <Label Text="+237" FontAttributes="Bold" VerticalOptions="Center" />
+                                    <Entry Grid.Column="1" Text="{Binding Phone}" Keyboard="Telephone" />
+                                </Grid>
+                            </Border>
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Courriel" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding Email}" Keyboard="Email" /></Border>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Adresse et position" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{Binding City, StringFormat='Ville : {0}'}" FontAttributes="Bold" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Arrondissement" Style="{StaticResource FieldLabel}" />
+                                <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding District}" /></Border>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                <Label Text="Quartier" Style="{StaticResource FieldLabel}" />
+                                <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding Neighborhood}" /></Border>
+                            </VerticalStackLayout>
+                        </Grid>
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Repère local" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding Landmark}" Placeholder="Ex. : face au marché" /></Border>
+                        </VerticalStackLayout>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Latitude" Style="{StaticResource FieldLabel}" />
+                                <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding LatitudeText}" Keyboard="Numeric" Placeholder="4.051200" /></Border>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                <Label Text="Longitude" Style="{StaticResource FieldLabel}" />
+                                <Border Style="{StaticResource InputBorder}"><Entry Text="{Binding LongitudeText}" Keyboard="Numeric" Placeholder="9.697800" /></Border>
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Button Text="Utiliser ma position actuelle" ImageSource="ic_gps.png" Style="{StaticResource SecondaryButton}"
+                                Command="{Binding UseCurrentPositionCommand}" IsEnabled="{Binding IsWorking, Converter={StaticResource InvertedBool}}" />
+                        <Label Style="{StaticResource Caption}" Text="Sans coordonnées GPS, la pharmacie n'apparaît pas sur la carte des visiteurs." />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Horaires" Style="{StaticResource SectionTitle}" />
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Ouverte 24 h/24" VerticalOptions="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding Is24h}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding Is24h, Converter={StaticResource InvertedBool}}">
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="Ouverture" Style="{StaticResource FieldLabel}" />
+                                <Border Style="{StaticResource InputBorder}"><TimePicker Time="{Binding OpensAt}" Format="HH:mm" /></Border>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                <Label Text="Fermeture" Style="{StaticResource FieldLabel}" />
+                                <Border Style="{StaticResource InputBorder}"><TimePicker Time="{Binding ClosesAt}" Format="HH:mm" /></Border>
+                            </VerticalStackLayout>
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Ouverte le dimanche" VerticalOptions="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding OpenOnSunday}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Pharmacie de garde" />
+                                <Label Text="Affichée « ouverte » en dehors des horaires habituels" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding IsOnDuty}" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource DangerBanner}" IsVisible="{Binding ErrorText, Converter={StaticResource HasValue}}">
+                    <Label Text="{Binding ErrorText}" Style="{StaticResource ErrorLabel}" />
+                </Border>
+
+                <Button Text="Historique des modifications" ImageSource="ic_history.png" Style="{StaticResource OutlineButton}" Command="{Binding OpenHistoryCommand}" />
+                <Button Text="Se déconnecter" Style="{StaticResource DangerButton}" Command="{Binding LogoutCommand}" Margin="0,0,0,8" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" BackgroundColor="{StaticResource Surface}" StrokeThickness="0" Padding="16,10,16,16">
+            <Button Text="Enregistrer les modifications" Command="{Binding SaveCommand}" IsEnabled="{Binding IsWorking, Converter={StaticResource InvertedBool}}" />
+        </Border>
+
+        <c:StateView Grid.RowSpan="2" State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}" />
+    </Grid>
+</views:BasePage>

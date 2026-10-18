@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:m="clr-namespace:PharmaFind.Models"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.MapPage"
+                x:DataType="vm:MapViewModel"
+                Title="{Binding Title}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Liste" Command="{Binding ShowListCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Position et rayon -->
+        <VerticalStackLayout BackgroundColor="{StaticResource Surface}" Padding="0,8,0,8" Spacing="4">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8" Padding="16,0">
+                <Image Source="ic_location_green.png" WidthRequest="18" HeightRequest="18" />
+                <Label Grid.Column="1" Text="{Binding Search.LocationLabel}" FontSize="14" VerticalOptions="Center" LineBreakMode="TailTruncation" />
+                <ImageButton Grid.Column="2" Source="ic_gps.png" BackgroundColor="{StaticResource PrimaryLight}" CornerRadius="18"
+                             WidthRequest="36" HeightRequest="36" Padding="8" Command="{Binding UseMyLocationCommand}"
+                             SemanticProperties.Description="Utiliser ma position" />
+                <Button Grid.Column="3" Text="Modifier" Style="{StaticResource TextButton}" Command="{Binding ChangeLocationCommand}" />
+            </Grid>
+            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                <HorizontalStackLayout Spacing="8" Padding="16,2" BindableLayout.ItemsSource="{Binding RadiusChips}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="m:FilterChip">
+                            <Border Style="{StaticResource Chip}" Padding="12,6">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                        <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MapViewModel}}, Path=SelectRadiusCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Label}" FontSize="13">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="White" />
+                                            <Setter Property="FontAttributes" Value="Bold" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </HorizontalStackLayout>
+            </ScrollView>
+        </VerticalStackLayout>
+
+        <Grid Grid.Row="1">
+            <WebView x:Name="MapWebView" Navigating="OnMapNavigating" />
+
+            <!-- Nombre de résultats + légende -->
+            <Border VerticalOptions="Start" HorizontalOptions="Start" Margin="12" BackgroundColor="#F2FFFFFF" StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12" Padding="10,6" IsVisible="{Binding ResultText, Converter={StaticResource HasValue}}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{Binding ResultText}" FontSize="12" FontAttributes="Bold" />
+                    <HorizontalStackLayout Spacing="10" IsVisible="{Binding HasMedicine}">
+                        <HorizontalStackLayout Spacing="4"><Ellipse Fill="#15803D" WidthRequest="10" HeightRequest="10" VerticalOptions="Center" /><Label Text="Disponible" FontSize="11" /></HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="4"><Ellipse Fill="#D97706" WidthRequest="10" HeightRequest="10" VerticalOptions="Center" /><Label Text="Faible" FontSize="11" /></HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="4"><Ellipse Fill="#B91C1C" WidthRequest="10" HeightRequest="10" VerticalOptions="Center" /><Label Text="Rupture" FontSize="11" /></HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="4"><Ellipse Fill="#6B7280" WidthRequest="10" HeightRequest="10" VerticalOptions="Center" /><Label Text="Non confirmée" FontSize="11" /></HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Fiche synthétique du marqueur sélectionné -->
+            <Border VerticalOptions="End" Margin="12" Style="{StaticResource Card}" IsVisible="{Binding Selected, Converter={StaticResource HasValue}}">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.18" Radius="16" Offset="0,4" />
+                </Border.Shadow>
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="8">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="{Binding Selected.Pharmacy.Name}" Style="{StaticResource H3}" />
+                        <Label Text="{Binding Selected.Pharmacy.LocationText}" Style="{StaticResource Caption}" />
+                    </VerticalStackLayout>
+                    <ImageButton Grid.Column="1" Source="ic_close.png" BackgroundColor="Transparent" WidthRequest="32" HeightRequest="32" Padding="6"
+                                 Command="{Binding CloseCardCommand}" VerticalOptions="Start" SemanticProperties.Description="Fermer" />
+
+                    <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" Spacing="10">
+                        <c:Badge Value="{Binding Selected.Status}" IsVisible="{Binding HasMedicine}" />
+                        <Label Text="{Binding Selected.DistanceText}" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                        <Label Text="{Binding Selected.Pharmacy.OpenText}" FontSize="13" VerticalOptions="Center"
+                               TextColor="{Binding Selected.IsOpen, Converter={StaticResource OpenColor}}" />
+                        <Label Text="{Binding Selected.PriceText}" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" IsVisible="{Binding HasMedicine}" />
+                    </HorizontalStackLayout>
+
+                    <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding Selected.UpdatedText}" FontSize="12"
+                           TextColor="{Binding Selected.Freshness, Converter={StaticResource FreshnessColor}}" IsVisible="{Binding HasMedicine}" />
+
+                    <Grid Grid.Row="3" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Button Text="Appeler" Style="{StaticResource SecondaryButton}" Command="{Binding CallCommand}" Padding="4,0" />
+                        <Button Grid.Column="1" Text="Itinéraire" Style="{StaticResource SecondaryButton}" Command="{Binding RouteCommand}" Padding="4,0" />
+                        <Button Grid.Column="2" Text="Détails" Command="{Binding OpenSelectedCommand}" Padding="4,0" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Service cartographique indisponible -->
+            <VerticalStackLayout IsVisible="{Binding IsMapUnavailable}" BackgroundColor="{StaticResource Background}" Padding="32" Spacing="12">
+                <Image Source="state_offline.png" WidthRequest="64" HeightRequest="64" Margin="0,40,0,0" />
+                <Label Text="Carte indisponible" Style="{StaticResource H2}" HorizontalTextAlignment="Center" />
+                <Label Style="{StaticResource BodySecondary}" HorizontalTextAlignment="Center"
+                       Text="Le service cartographique ne répond pas (réseau lent ou coupé). Les résultats restent consultables en liste." />
+                <Button Text="Réessayer" Command="{Binding ReloadMapCommand}" />
+                <Button Text="Voir la liste" Style="{StaticResource OutlineButton}" Command="{Binding ShowListCommand}" />
+            </VerticalStackLayout>
+
+            <c:StateView State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}" />
+        </Grid>
+    </Grid>
+</views:BasePage>

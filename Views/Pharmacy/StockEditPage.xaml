@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.StockEditPage"
+                x:DataType="vm:StockEditViewModel"
+                Title="{Binding Title}">
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="14">
+                <Border Style="{StaticResource Card}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Border Style="{StaticResource IconCircle}">
+                            <Image Source="ic_pill.png" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label Text="{Binding Medicine.DisplayName}" Style="{StaticResource H3}" />
+                            <Label Text="{Binding Medicine.Details}" Style="{StaticResource Caption}" />
+                            <Label Text="{Binding LastUpdatedText}" Style="{StaticResource Caption}" Margin="0,4,0,0" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Quantité -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Quantité en stock" Style="{StaticResource FieldLabel}" />
+                        <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="8">
+                            <Button Text="−10" Style="{StaticResource OutlineButton}" Command="{Binding AdjustCommand}" CommandParameter="-10" Padding="10,0" />
+                            <Button Grid.Column="1" Text="−1" Style="{StaticResource OutlineButton}" Command="{Binding AdjustCommand}" CommandParameter="-1" Padding="12,0" />
+                            <Border Grid.Column="2" Style="{StaticResource InputBorder}">
+                                <Entry Text="{Binding QuantityText}" Keyboard="Numeric" HorizontalTextAlignment="Center" FontSize="18" FontAttributes="Bold" />
+                            </Border>
+                            <Button Grid.Column="3" Text="+1" Style="{StaticResource OutlineButton}" Command="{Binding AdjustCommand}" CommandParameter="1" Padding="12,0" />
+                            <Button Grid.Column="4" Text="+10" Style="{StaticResource OutlineButton}" Command="{Binding AdjustCommand}" CommandParameter="10" Padding="10,0" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="Déclarer une rupture" FontAttributes="Bold" />
+                                <Label Text="Les visiteurs verront « Indisponible »" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding DeclaredOutOfStock}" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Prix et seuil -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Prix unitaire indicatif" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <Entry Text="{Binding PriceText}" Keyboard="Numeric" Placeholder="Ex. 1500" />
+                                    <Label Grid.Column="1" Text="FCFA" FontAttributes="Bold" VerticalOptions="Center" TextColor="{StaticResource TextSecondary}" />
+                                </Grid>
+                            </Border>
+                            <Label Text="{Binding PricePreview, StringFormat='Affiché : {0}'}" Style="{StaticResource Caption}"
+                                   IsVisible="{Binding PricePreview, Converter={StaticResource HasValue}}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Seuil d'alerte « stock faible »" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource InputBorder}">
+                                <Entry Text="{Binding ThresholdText}" Keyboard="Numeric" />
+                            </Border>
+                            <Label Text="À ce niveau ou en dessous, vous recevez une alerte et les visiteurs voient « Stock faible »." Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource DangerBanner}" IsVisible="{Binding ErrorText, Converter={StaticResource HasValue}}">
+                    <Label Text="{Binding ErrorText}" Style="{StaticResource ErrorLabel}" />
+                </Border>
+
+                <Button Text="Retirer de mon inventaire" Style="{StaticResource DangerButton}" Command="{Binding RemoveCommand}"
+                        IsVisible="{Binding IsNew, Converter={StaticResource InvertedBool}}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Border Grid.Row="1" BackgroundColor="{StaticResource Surface}" StrokeThickness="0" Padding="16,10,16,16">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <Button Text="Enregistrer" Command="{Binding SaveCommand}" IsEnabled="{Binding IsWorking, Converter={StaticResource InvertedBool}}" />
+                <ActivityIndicator Grid.Column="1" IsRunning="{Binding IsWorking}" IsVisible="{Binding IsWorking}" />
+            </Grid>
+        </Border>
+
+        <c:StateView Grid.RowSpan="2" State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}" />
+    </Grid>
+</views:BasePage>

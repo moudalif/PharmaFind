@@ -1,0 +1,5 @@
+bin/
+obj/
+*.Backup.tmp
+*.pro.Backup.tmp
+.vs/

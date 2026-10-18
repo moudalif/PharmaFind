@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PharmaFind.Views.LaunchPage"
+             BackgroundColor="{StaticResource Primary}"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="*,Auto,Auto,*,Auto" Padding="32">
+        <Border Grid.Row="1" BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 28"
+                WidthRequest="104" HeightRequest="104" Padding="18" HorizontalOptions="Center">
+            <Image x:Name="Logo" Source="logo.png" />
+        </Border>
+        <VerticalStackLayout Grid.Row="2" Spacing="6" Margin="0,20,0,0">
+            <Label Text="PharmaFind" TextColor="White" FontSize="30" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+            <Label Text="Le bon médicament, à la pharmacie la plus proche" TextColor="#D1FAE5" FontSize="15" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+        <VerticalStackLayout Grid.Row="4" Spacing="10">
+            <ActivityIndicator IsRunning="True" Color="White" />
+            <Label Text="Cameroun · pilote Douala" TextColor="#D1FAE5" FontSize="12" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:m="clr-namespace:PharmaFind.Models"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.SearchPage"
+                x:DataType="vm:SearchViewModel"
+                Title="Rechercher un médicament">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*" Padding="0">
+
+        <!-- Saisie -->
+        <Border Style="{StaticResource InputBorder}" Margin="16,16,16,8" HeightRequest="52">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                <Image Source="ic_search.png" Style="{StaticResource ListIcon}" />
+                <Entry x:Name="SearchEntry" Grid.Column="1" Text="{Binding Query}" Placeholder="Doliprane, paracétamol, Coartem…"
+                       ReturnType="Search" ClearButtonVisibility="Never" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
+                       SemanticProperties.Hint="Saisissez le nom commercial ou la DCI" />
+                <ImageButton Grid.Column="2" Source="ic_close.png" WidthRequest="32" HeightRequest="32" Padding="6"
+                             BackgroundColor="Transparent" Command="{Binding ClearQueryCommand}"
+                             IsVisible="{Binding IsQueryEmpty, Converter={StaticResource InvertedBool}}"
+                             SemanticProperties.Description="Effacer" />
+            </Grid>
+        </Border>
+
+        <!-- Filtre par forme -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="8" Padding="16,4,16,8" BindableLayout.ItemsSource="{Binding FormChips}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="m:FilterChip">
+                        <Border Style="{StaticResource Chip}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                    <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectFormCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding Label}" FontSize="13">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="TextColor" Value="White" />
+                                        <Setter Property="FontAttributes" Value="Bold" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Noms similaires -->
+        <Border Grid.Row="2" Style="{StaticResource WarningBanner}" Margin="16,0,16,8"
+                IsVisible="{Binding DidYouMean, Converter={StaticResource HasValue}}">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding AcceptSuggestionCommand}" />
+            </Border.GestureRecognizers>
+            <Label FontSize="14">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="Vouliez-vous dire " />
+                        <Span Text="{Binding DidYouMean.BrandName}" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                        <Span Text=" ?" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+        </Border>
+
+        <Grid Grid.Row="3">
+            <!-- Avant saisie : recherches récentes -->
+            <ScrollView IsVisible="{Binding IsQueryEmpty}">
+                <VerticalStackLayout Padding="16,8" Spacing="8">
+                    <Label Text="Recherches récentes" Style="{StaticResource SectionTitle}"
+                           IsVisible="{Binding Recent.Count, Converter={StaticResource HasValue}}" />
+                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Recent}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="m:SearchHistoryEntry">
+                                <Border Style="{StaticResource Chip}" Margin="0,0,8,8">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=UseRecentCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Image Source="ic_history.png" WidthRequest="14" HeightRequest="14" />
+                                        <Label Text="{Binding Query}" FontSize="13" />
+                                    </HorizontalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                    <Border Style="{StaticResource InfoBanner}" Margin="0,8,0,0">
+                        <Label FontSize="13" TextColor="{StaticResource TextSecondary}"
+                               Text="Astuce : recherchez par nom commercial (Doliprane) ou par dénomination commune internationale (paracétamol), puis choisissez le dosage et la forme." />
+                    </Border>
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <!-- Suggestions -->
+            <CollectionView ItemsSource="{Binding Suggestions}" SelectionMode="None"
+                            IsVisible="{Binding IsQueryEmpty, Converter={StaticResource InvertedBool}}">
+                <CollectionView.Header>
+                    <Label Text="{Binding ResultCountText}" Style="{StaticResource Caption}" Margin="20,4,16,4" />
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:Medicine">
+                        <Grid Padding="16,5">
+                            <Border Style="{StaticResource CardTight}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectMedicineCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Border Style="{StaticResource IconCircle}">
+                                        <Image Source="ic_pill.png" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label Text="{Binding DisplayName}" Style="{StaticResource H3}" />
+                                        <Label Text="{Binding Details}" Style="{StaticResource BodySecondary}" FontSize="13" />
+                                        <c:Badge Value="{Binding Delivery}" Margin="0,3,0,0" />
+                                    </VerticalStackLayout>
+                                    <ImageButton Grid.Column="2" Source="ic_info.png" BackgroundColor="Transparent" WidthRequest="40" HeightRequest="40" Padding="9"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=OpenMedicineCommand}"
+                                                 CommandParameter="{Binding .}" SemanticProperties.Description="Voir la fiche du médicament" />
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <c:StateView State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}"
+                         EmptyTitle="Aucun médicament trouvé"
+                         EmptyMessage="Vérifiez l'orthographe ou essayez la DCI. Le médicament n'est peut-être pas encore au catalogue." />
+        </Grid>
+    </Grid>
+</views:BasePage>

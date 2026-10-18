@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                x:Class="PharmaFind.Views.ProfilePage"
+                x:DataType="vm:ProfileViewModel"
+                Title="Profil">
+
+    <ContentPage.Resources>
+        <!-- Ligne de menu réutilisable -->
+        <Style x:Key="MenuRow" TargetType="Grid">
+            <Setter Property="Padding" Value="16,14" />
+            <Setter Property="ColumnSpacing" Value="14" />
+        </Style>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+
+            <!-- Compte (facultatif) -->
+            <Border Style="{StaticResource Card}">
+                <Grid>
+                    <VerticalStackLayout Spacing="12" IsVisible="{Binding IsLoggedIn, Converter={StaticResource InvertedBool}}">
+                        <Label Text="Compte facultatif" Style="{StaticResource H2}" />
+                        <Label Style="{StaticResource BodySecondary}"
+                               Text="Créez un compte pour enregistrer vos pharmacies favorites. La recherche fonctionne sans inscription." />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Button Text="Se connecter" Command="{Binding LoginCommand}" />
+                            <Button Grid.Column="1" Text="Créer un compte" Style="{StaticResource OutlineButton}" Command="{Binding RegisterCommand}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" IsVisible="{Binding IsLoggedIn}">
+                        <Border BackgroundColor="{StaticResource Primary}" StrokeThickness="0" StrokeShape="RoundRectangle 26" WidthRequest="52" HeightRequest="52">
+                            <Label Text="{Binding Initials}" TextColor="White" FontAttributes="Bold" FontSize="18"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                            <Label Text="{Binding UserName}" Style="{StaticResource H3}" />
+                            <Label Text="{Binding UserEmail}" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="Quitter" Style="{StaticResource TextButton}" TextColor="{StaticResource Danger}" Command="{Binding LogoutCommand}" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Menu visiteur -->
+            <Label Text="Mon utilisation" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}" Padding="0">
+                <VerticalStackLayout>
+                    <Grid Style="{StaticResource MenuRow}" ColumnDefinitions="Auto,*,Auto">
+                        <Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding OpenFavoritesCommand}" /></Grid.GestureRecognizers>
+                        <Image Source="ic_heart.png" Style="{StaticResource ListIcon}" />
+                        <Label Grid.Column="1" Text="Pharmacies favorites" VerticalOptions="Center" />
+                        <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="16" HeightRequest="16" />
+                    </Grid>
+                    <BoxView Style="{StaticResource Divider}" />
+                    <Grid Style="{StaticResource MenuRow}" ColumnDefinitions="Auto,*,Auto">
+                        <Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding OpenHistoryCommand}" /></Grid.GestureRecognizers>
+                        <Image Source="ic_history.png" Style="{StaticResource ListIcon}" />
+                        <Label Grid.Column="1" Text="Historique des recherches" VerticalOptions="Center" />
+                        <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="16" HeightRequest="16" />
+                    </Grid>
+                    <BoxView Style="{StaticResource Divider}" />
+                    <Grid Style="{StaticResource MenuRow}" ColumnDefinitions="Auto,*,Auto">
+                        <Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding OpenLocationCommand}" /></Grid.GestureRecognizers>
+                        <Image Source="ic_location.png" Style="{StaticResource ListIcon}" />
+                        <Label Grid.Column="1" Text="Ma position de recherche" VerticalOptions="Center" />
+                        <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="16" HeightRequest="16" />
+                    </Grid>
+                    <BoxView Style="{StaticResource Divider}" />
+                    <Grid Style="{StaticResource MenuRow}" ColumnDefinitions="Auto,*,Auto">
+                        <Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding ChangeLanguageCommand}" /></Grid.GestureRecognizers>
+                        <Image Source="ic_settings.png" Style="{StaticResource ListIcon}" />
+                        <Label Grid.Column="1" Text="Langue" VerticalOptions="Center" />
+                        <Label Grid.Column="2" Text="Français" Style="{StaticResource Caption}" VerticalOptions="Center" />
+                    </Grid>
+                    <BoxView Style="{StaticResource Divider}" />
+                    <Grid Style="{StaticResource MenuRow}" ColumnDefinitions="Auto,*,Auto">
+                        <Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding OpenPrivacyCommand}" /></Grid.GestureRecognizers>
+                        <Image Source="ic_lock.png" Style="{StaticResource ListIcon}" />
+                        <Label Grid.Column="1" Text="Confidentialité et données" VerticalOptions="Center" />
+                        <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="16" HeightRequest="16" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Espaces professionnels -->
+            <Label Text="Professionnels" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}" Padding="0">
+                <VerticalStackLayout>
+                    <Grid Style="{StaticResource MenuRow}" ColumnDefinitions="Auto,*,Auto">
+                        <Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding OpenPharmacySpaceCommand}" /></Grid.GestureRecognizers>
+                        <Image Source="ic_store.png" Style="{StaticResource ListIcon}" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label Text="Espace pharmacie" />
+                            <Label Text="Gérer le stock de votre établissement" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="16" HeightRequest="16" />
+                    </Grid>
+                    <BoxView Style="{StaticResource Divider}" />
+                    <Grid Style="{StaticResource MenuRow}" ColumnDefinitions="Auto,*,Auto">
+                        <Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding RequestPharmacyAccountCommand}" /></Grid.GestureRecognizers>
+                        <Image Source="ic_doc.png" Style="{StaticResource ListIcon}" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label Text="Inscrire ma pharmacie" />
+                            <Label Text="Demande de compte professionnel" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="16" HeightRequest="16" />
+                    </Grid>
+                    <BoxView Style="{StaticResource Divider}" />
+                    <Grid Style="{StaticResource MenuRow}" ColumnDefinitions="Auto,*,Auto">
+                        <Grid.GestureRecognizers><TapGestureRecognizer Command="{Binding OpenAdminSpaceCommand}" /></Grid.GestureRecognizers>
+                        <Image Source="tab_shield.png" Style="{StaticResource ListIcon}" />
+                        <Label Grid.Column="1" Text="Administration" VerticalOptions="Center" />
+                        <Image Grid.Column="2" Source="ic_chevron.png" WidthRequest="16" HeightRequest="16" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Mode démonstration (soutenance) -->
+            <Label Text="Mode démonstration" Style="{StaticResource SectionTitle}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="14">
+                    <Label Style="{StaticResource Caption}"
+                           Text="Options de la maquette pour montrer chaque état d'écran. Elles disparaîtront quand l'API sera branchée." />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Position de démonstration (Akwa)" />
+                            <Label Text="Utile sur émulateur, dont la position par défaut est hors du Cameroun" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding Demo.UseDemoPosition}" VerticalOptions="Center" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Simuler l'absence de connexion" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding Demo.SimulateOffline}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Simuler une panne du serveur" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding Demo.SimulateServerError}" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Simuler un réseau lent (2,5 s)" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding Demo.SimulateSlowNetwork}" />
+                    </Grid>
+                    <Label Style="{StaticResource Caption}" Text="Comptes démo : visiteur@demo.cm, pharmacie@demo.cm, attente@demo.cm, admin@demo.cm · mot de passe Demo1234" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding VersionText}" Style="{StaticResource Caption}" HorizontalTextAlignment="Center" Margin="0,0,0,16" />
+        </VerticalStackLayout>
+    </ScrollView>
+</views:BasePage>

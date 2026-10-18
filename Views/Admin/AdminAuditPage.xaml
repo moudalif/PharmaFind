@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<views:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:views="clr-namespace:PharmaFind.Views"
+                xmlns:vm="clr-namespace:PharmaFind.ViewModels"
+                xmlns:m="clr-namespace:PharmaFind.Models"
+                xmlns:c="clr-namespace:PharmaFind.Controls"
+                x:Class="PharmaFind.Views.AdminAuditPage"
+                x:DataType="vm:AdminAuditViewModel"
+                Title="Journal d'audit">
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Style="{StaticResource InputBorder}" Margin="16,16,16,8">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                <Image Source="ic_search.png" Style="{StaticResource ListIcon}" />
+                <Entry Grid.Column="1" Text="{Binding FilterText}" Placeholder="Acteur, action ou ressource" />
+            </Grid>
+        </Border>
+        <Grid Grid.Row="1">
+            <CollectionView ItemsSource="{Binding Entries}" SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="m:AuditEntry">
+                        <VerticalStackLayout Padding="16,0">
+                            <Grid Padding="4,12" ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                <Image Source="ic_audit.png" Style="{StaticResource ListIcon}" VerticalOptions="Start" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                    <Label FontSize="14">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding Action}" FontAttributes="Bold" />
+                                                <Span Text=" · " />
+                                                <Span Text="{Binding Resource}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label Style="{StaticResource Caption}">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding Actor}" />
+                                                <Span Text=" · " />
+                                                <Span Text="{Binding TimestampText}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </VerticalStackLayout>
+                            </Grid>
+                            <BoxView Style="{StaticResource Divider}" />
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <c:StateView State="{Binding State}" Message="{Binding StateMessage}" RetryCommand="{Binding RetryCommand}"
+                         EmptyTitle="Aucune entrée" EmptyMessage="Aucune action ne correspond à cette recherche." />
+        </Grid>
+    </Grid>
+</views:BasePage>
