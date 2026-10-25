@@ -15,20 +15,37 @@ public partial class MapPage : BasePage
         _vm.PropertyChanged += OnViewModelPropertyChanged;
     }
 
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    protected override void OnAppearing()
     {
-        if (e.PropertyName == nameof(MapViewModel.MapHtml) && !string.IsNullOrEmpty(_vm.MapHtml))
-            MapWebView.Source = new HtmlWebViewSource { Html = _vm.MapHtml };
+        base.OnAppearing();
+        RefreshMap();
     }
 
-    /// <summary>Intercepte les URL « pharmafind:// » émises par la carte (marqueur touché, erreur de chargement).</summary>
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MapViewModel.MapHtml))
+            RefreshMap();
+    }
+
+    private void RefreshMap()
+    {
+        if (!string.IsNullOrEmpty(_vm.MapHtml))
+        {
+            MapWebView.Source = new HtmlWebViewSource { Html = _vm.MapHtml };
+        }
+    }
+
+    /// <summary>Intercepte les URL émises par la carte (marqueur touché, erreur de chargement).</summary>
     private void OnMapNavigating(object? sender, WebNavigatingEventArgs e)
     {
-        var prefix = LeafletMapProvider.Scheme + "://";
+        var prefix = LeafletMapProvider.HostPrefix;
         if (!e.Url.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return;
 
         e.Cancel = true;
-        var path = e.Url[prefix.Length..].TrimEnd('/');
+        var raw = e.Url[prefix.Length..].TrimEnd('/');
+        var qIdx = raw.IndexOf('?');
+        var path = qIdx >= 0 ? raw[..qIdx] : raw;
+
         MainThread.BeginInvokeOnMainThread(() =>
         {
             if (path.StartsWith("pharmacy/") && int.TryParse(path["pharmacy/".Length..], out var id))

@@ -120,7 +120,7 @@
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ResultsViewModel}}, Path=OpenPharmacyCommand}"
                                                           CommandParameter="{Binding .}" />
                                 </Border.GestureRecognizers>
-                                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="6" ColumnSpacing="10">
+                                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="6" ColumnSpacing="10" InputTransparent="True">
                                     <VerticalStackLayout Spacing="2">
                                         <Label Text="{Binding Pharmacy.Name}" Style="{StaticResource H3}" />
                                         <Label Text="{Binding Pharmacy.LocationText}" Style="{StaticResource Caption}" />

@@ -78,11 +78,13 @@ public abstract partial class BaseViewModel(ViewModelContext context) : Observab
         }
         catch (ServiceUnavailableException ex)
         {
+            Console.WriteLine($"[PharmaFind ServiceUnavailable] {ex}");
             StateMessage = ex.Message;
             State = ViewState.Error;
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"[PharmaFind CRITICAL ERROR] {ex}");
             Debug.WriteLine(ex);
             StateMessage = "Une erreur inattendue est survenue.";
             State = ViewState.Error;

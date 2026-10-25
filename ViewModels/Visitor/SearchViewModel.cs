@@ -28,6 +28,15 @@ public partial class SearchViewModel(
 
     [ObservableProperty] private Medicine? didYouMean;
     [ObservableProperty] private string resultCountText = string.Empty;
+    [ObservableProperty] private Medicine? selectedSuggestion;
+
+    partial void OnSelectedSuggestionChanged(Medicine? value)
+    {
+        if (value is null) return;
+        var med = value;
+        SelectedSuggestion = null;
+        _ = SelectMedicine(med);
+    }
 
     public bool IsQueryEmpty => string.IsNullOrWhiteSpace(Query);
 
@@ -44,7 +53,15 @@ public partial class SearchViewModel(
         if (FormChips.Count == 0)
         {
             FormChips.Add(new FilterChip("Toutes les formes", null) { IsSelected = true });
-            foreach (var form in await medicines.GetFormsAsync()) FormChips.Add(new FilterChip(form, form));
+            try
+            {
+                var forms = await medicines.GetFormsAsync();
+                foreach (var form in forms) FormChips.Add(new FilterChip(form, form));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[SearchViewModel] Form loading fallback: {ex.Message}");
+            }
         }
         if (!IsQueryEmpty) await SearchNowAsync();
     }
@@ -72,7 +89,8 @@ public partial class SearchViewModel(
         var current = Query;
         if (string.IsNullOrWhiteSpace(current)) return;
 
-        await RunLoadAsync(async () =>
+        IsWorking = true;
+        try
         {
             var items = await medicines.SuggestAsync(current, _selectedForm);
             if (current != Query) return; // une saisie plus récente a pris le relais
@@ -87,8 +105,17 @@ public partial class SearchViewModel(
             };
 
             DidYouMean = items.Count == 0 ? await medicines.DidYouMeanAsync(current) : null;
-            if (items.Count == 0) State = ViewState.Empty;
-        }, "Recherche…");
+            State = items.Count == 0 ? ViewState.Empty : ViewState.Content;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[SearchViewModel] Search error: {ex.Message}");
+            State = ViewState.Content;
+        }
+        finally
+        {
+            IsWorking = false;
+        }
     }
 
     [RelayCommand]

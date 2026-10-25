@@ -1,8 +1,13 @@
-# PharmaFind — interface mobile (.NET MAUI)
+# PharmaFind — Application Mobile Fullstack (.NET MAUI & ASP.NET Core)
 
-Partie **visuelle** de PharmaFind : tous les écrans du cahier des charges, en C# / XAML / MVVM, avec des **données fictives** de Douala. **Aucun backend** n'est inclus : pas d'API ASP.NET Core ni de base PostgreSQL. Les écrans passent par des interfaces de services, aujourd'hui implémentées par des services simulés. Brancher l'API ne demandera de remplacer que ces services.
+PharmaFind est une application fullstack **100 % C# / .NET 10** comprenant :
+1. **Frontend Mobile (.NET MAUI)** : tous les écrans du cahier des charges en C# / XAML / MVVM, avec recherche géolocalisée, carte Leaflet, gestion de stock et panneau d'administration.
+2. **Backend API (ASP.NET Core Web API & Entity Framework Core)** : dans le sous-dossier `PharmaFind.Api/`, avec base de données SQLite (`pharmafind.db`), authentification JWT, contrôleurs REST complets et chargement automatique des données (Seed).
+3. **Bascule transparente** : l'application peut fonctionner au choix en **Mode Connecté (API réelle C#)** ou en **Mode Démo local** (sélectionnable dans le Profil).
 
-> ⚠️ **Code non compilé.** Le SDK .NET et les paquets NuGet n'étaient pas accessibles dans l'environnement où le projet a été écrit. Le code a passé des vérifications statiques (syntaxe C#, XAML bien formé, correspondance des liaisons avec les ViewModels, ressources, routes, injection de dépendances), mais **la première compilation dans Visual Studio peut révéler quelques erreurs**. Corrigez-les avant toute démonstration.
+Pour une description détaillée des objectifs, fonctionnalités, architecture et règles métier, consulter [Fonctionnement.md](Fonctionnement.md).
+
+> **État de compilation vérifié :** Le frontend Android et le backend Web API compilent avec succès (0 avertissement, 0 erreur) sur le SDK .NET 10.
 
 ---
 
@@ -18,7 +23,14 @@ Partie **visuelle** de PharmaFind : tous les écrans du cahier des charges, en C
 2. Laisser la restauration NuGet se faire (`Microsoft.Maui.Controls`, `CommunityToolkit.Mvvm 8.4.0`).
 3. Choisir la cible **Android Emulator** (ou **Windows Machine** pour un test rapide sur PC), puis lancer avec F5.
 
-En ligne de commande :
+**Lancer le backend API (C# ASP.NET Core) :**
+```bash
+cd PharmaFind.Api
+dotnet run --urls "http://0.0.0.0:5133"
+```
+*La base SQLite locale `pharmafind.db` et toutes les données de départ (Seed) sont initialisées automatiquement au démarrage.*
+
+**Lancer l'application mobile MAUI :**
 ```bash
 dotnet build -t:Run -f net10.0-android
 ```

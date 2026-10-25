@@ -14,6 +14,15 @@ public class DeviceLocationService(DemoSettings demo) : ILocationService
     {
         try
         {
+            if (demo.UseDemoPosition)
+                return new LocationResult(new UserLocation
+                {
+                    Latitude = DemoPlace.Latitude,
+                    Longitude = DemoPlace.Longitude,
+                    Label = "Ma position (démo : Akwa)",
+                    Source = LocationSource.Gps
+                }, LocationError.None);
+
             var status = await MainThread.InvokeOnMainThreadAsync(async () =>
             {
                 var current = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
@@ -24,15 +33,6 @@ public class DeviceLocationService(DemoSettings demo) : ILocationService
 
             if (status != PermissionStatus.Granted)
                 return new LocationResult(null, LocationError.PermissionDenied);
-
-            if (demo.UseDemoPosition)
-                return new LocationResult(new UserLocation
-                {
-                    Latitude = DemoPlace.Latitude,
-                    Longitude = DemoPlace.Longitude,
-                    Label = "Ma position (démo : Akwa)",
-                    Source = LocationSource.Gps
-                }, LocationError.None);
 
             var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
             var location = await Geolocation.Default.GetLocationAsync(request, ct)

@@ -50,7 +50,11 @@ public partial class MapViewModel(
     protected override async Task LoadAsync()
     {
         foreach (var chip in RadiusChips) chip.IsSelected = (int)chip.Value! == Search.RadiusKm;
-        if (_loadedVersion == Search.Version && !string.IsNullOrEmpty(MapHtml) && State == ViewState.Content) return;
+        if (_loadedVersion == Search.Version && !string.IsNullOrEmpty(MapHtml) && State == ViewState.Content)
+        {
+            OnPropertyChanged(nameof(MapHtml));
+            return;
+        }
 
         await RunLoadAsync(async () =>
         {

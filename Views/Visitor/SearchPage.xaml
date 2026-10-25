@@ -13,12 +13,14 @@
 
         <!-- Saisie -->
         <Border Style="{StaticResource InputBorder}" Margin="16,16,16,8" HeightRequest="52">
-            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
                 <Image Source="ic_search.png" Style="{StaticResource ListIcon}" />
                 <Entry x:Name="SearchEntry" Grid.Column="1" Text="{Binding Query}" Placeholder="Doliprane, paracétamol, Coartem…"
                        ReturnType="Search" ClearButtonVisibility="Never" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False"
                        SemanticProperties.Hint="Saisissez le nom commercial ou la DCI" />
-                <ImageButton Grid.Column="2" Source="ic_close.png" WidthRequest="32" HeightRequest="32" Padding="6"
+                <ActivityIndicator Grid.Column="2" IsRunning="{Binding IsWorking}" IsVisible="{Binding IsWorking}"
+                                   WidthRequest="22" HeightRequest="22" Color="{StaticResource Primary}" />
+                <ImageButton Grid.Column="3" Source="ic_close.png" WidthRequest="32" HeightRequest="32" Padding="6"
                              BackgroundColor="Transparent" Command="{Binding ClearQueryCommand}"
                              IsVisible="{Binding IsQueryEmpty, Converter={StaticResource InvertedBool}}"
                              SemanticProperties.Description="Effacer" />
@@ -41,7 +43,7 @@
                                 <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=SelectFormCommand}"
                                                       CommandParameter="{Binding .}" />
                             </Border.GestureRecognizers>
-                            <Label Text="{Binding Label}" FontSize="13">
+                            <Label Text="{Binding Label}" FontSize="13" InputTransparent="True">
                                 <Label.Triggers>
                                     <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
                                         <Setter Property="TextColor" Value="White" />
@@ -86,7 +88,7 @@
                                         <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:SearchViewModel}}, Path=UseRecentCommand}"
                                                               CommandParameter="{Binding .}" />
                                     </Border.GestureRecognizers>
-                                    <HorizontalStackLayout Spacing="6">
+                                    <HorizontalStackLayout Spacing="6" InputTransparent="True">
                                         <Image Source="ic_history.png" WidthRequest="14" HeightRequest="14" />
                                         <Label Text="{Binding Query}" FontSize="13" />
                                     </HorizontalStackLayout>
@@ -102,7 +104,8 @@
             </ScrollView>
 
             <!-- Suggestions -->
-            <CollectionView ItemsSource="{Binding Suggestions}" SelectionMode="None"
+            <CollectionView ItemsSource="{Binding Suggestions}" SelectionMode="Single"
+                            SelectedItem="{Binding SelectedSuggestion, Mode=TwoWay}"
                             IsVisible="{Binding IsQueryEmpty, Converter={StaticResource InvertedBool}}">
                 <CollectionView.Header>
                     <Label Text="{Binding ResultCountText}" Style="{StaticResource Caption}" Margin="20,4,16,4" />
@@ -116,10 +119,10 @@
                                                           CommandParameter="{Binding .}" />
                                 </Border.GestureRecognizers>
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                                    <Border Style="{StaticResource IconCircle}">
+                                    <Border Style="{StaticResource IconCircle}" InputTransparent="True">
                                         <Image Source="ic_pill.png" />
                                     </Border>
-                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center" InputTransparent="True">
                                         <Label Text="{Binding DisplayName}" Style="{StaticResource H3}" />
                                         <Label Text="{Binding Details}" Style="{StaticResource BodySecondary}" FontSize="13" />
                                         <c:Badge Value="{Binding Delivery}" Margin="0,3,0,0" />

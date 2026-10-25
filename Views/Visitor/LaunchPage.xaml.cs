@@ -16,8 +16,8 @@ public partial class LaunchPage : ContentPage
         if (_started) return;
         _started = true;
 
-        await Logo.ScaleTo(1.08, 350, Easing.CubicOut);
-        await Logo.ScaleTo(1.0, 250, Easing.CubicIn);
+        await Logo.ScaleToAsync(1.08, 350, Easing.CubicOut);
+        await Logo.ScaleToAsync(1.0, 250, Easing.CubicIn);
         await Task.Delay(600);
         await Shell.Current.GoToAsync(Routes.VisitorHome);
     }

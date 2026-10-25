@@ -24,6 +24,9 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+		<DefaultItemExcludes>$(DefaultItemExcludes);PharmaFind.Api\**;PharmaFind.Api.Tests\**</DefaultItemExcludes>
+		<RuntimeIdentifiers Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">android-arm;android-arm64</RuntimeIdentifiers>
+		<EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -32,6 +35,8 @@
 		<MauiImage Include="Resources\Images\*" />
 		<MauiImage Update="Resources\Images\logo.svg" BaseSize="72,72" />
 		<MauiImage Update="Resources\Images\state_*.svg" BaseSize="64,64" />
+		<EmbeddedResource Include="Resources\Raw\leaflet.js" LogicalName="PharmaFind.Embedded.leaflet.js" />
+		<EmbeddedResource Include="Resources\Raw\leaflet.css" LogicalName="PharmaFind.Embedded.leaflet.css" />
 	</ItemGroup>
 
 	<ItemGroup>

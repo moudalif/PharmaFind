@@ -123,7 +123,14 @@
             <Border Style="{StaticResource Card}">
                 <VerticalStackLayout Spacing="14">
                     <Label Style="{StaticResource Caption}"
-                           Text="Options de la maquette pour montrer chaque état d'écran. Elles disparaîtront quand l'API sera branchée." />
+                           Text="Options pour basculer entre le backend C# réel et le mode démonstration local." />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Mode connecté (API C# ASP.NET Core)" FontAttributes="Bold" />
+                            <Label Text="Interagit directement avec le backend réel et la base SQLite" Style="{StaticResource Caption}" />
+                        </VerticalStackLayout>
+                        <Switch Grid.Column="1" IsToggled="{Binding Demo.UseRemoteApi}" VerticalOptions="Center" />
+                    </Grid>
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout Spacing="2">
                             <Label Text="Position de démonstration (Akwa)" />

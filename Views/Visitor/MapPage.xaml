@@ -56,7 +56,7 @@
         </VerticalStackLayout>
 
         <Grid Grid.Row="1">
-            <WebView x:Name="MapWebView" Navigating="OnMapNavigating" />
+            <WebView x:Name="MapWebView" HorizontalOptions="Fill" VerticalOptions="Fill" Navigating="OnMapNavigating" />
 
             <!-- Nombre de résultats + légende -->
             <Border VerticalOptions="Start" HorizontalOptions="Start" Margin="12" BackgroundColor="#F2FFFFFF" StrokeThickness="0"

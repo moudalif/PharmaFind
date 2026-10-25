@@ -25,15 +25,39 @@ public static class ServiceRegistration
         services.AddSingleton<IHistoryService, LocalHistoryService>();
         services.AddSingleton<ViewModelContext>();
 
-        // --- Données fictives (à remplacer par l'API) ---
+        // --- API Client & Services réels (Backend C# ASP.NET Core) ---
+        services.AddSingleton(sp =>
+        {
+            var demo = sp.GetRequiredService<DemoSettings>();
+            var client = new PharmaFind.Services.Api.ApiClient(demo.ApiBaseUrl);
+            return client;
+        });
+        services.AddSingleton<PharmaFind.Services.Api.ApiAuthService>();
+        services.AddSingleton<PharmaFind.Services.Api.ApiMedicineService>();
+        services.AddSingleton<PharmaFind.Services.Api.ApiPharmacyService>();
+        services.AddSingleton<PharmaFind.Services.Api.ApiStockService>();
+        services.AddSingleton<PharmaFind.Services.Api.ApiFavoritesService>();
+        services.AddSingleton<PharmaFind.Services.Api.ApiReportService>();
+        services.AddSingleton<PharmaFind.Services.Api.ApiAdminService>();
+
+        // --- Données fictives (Mode Démo) ---
         services.AddSingleton<MockDataStore>();
-        services.AddSingleton<IAuthService, MockAuthService>();
-        services.AddSingleton<IMedicineService, MockMedicineService>();
-        services.AddSingleton<IPharmacyService, MockPharmacyService>();
-        services.AddSingleton<IStockService, MockStockService>();
-        services.AddSingleton<IFavoritesService, MockFavoritesService>();
-        services.AddSingleton<IReportService, MockReportService>();
-        services.AddSingleton<IAdminService, MockAdminService>();
+        services.AddSingleton<MockAuthService>();
+        services.AddSingleton<MockMedicineService>();
+        services.AddSingleton<MockPharmacyService>();
+        services.AddSingleton<MockStockService>();
+        services.AddSingleton<MockFavoritesService>();
+        services.AddSingleton<MockReportService>();
+        services.AddSingleton<MockAdminService>();
+
+        // --- Services commutables (Bascule transparente Mode Réel API / Mode Démo) ---
+        services.AddSingleton<IAuthService, SwitchingAuthService>();
+        services.AddSingleton<IMedicineService, SwitchingMedicineService>();
+        services.AddSingleton<IPharmacyService, SwitchingPharmacyService>();
+        services.AddSingleton<IStockService, SwitchingStockService>();
+        services.AddSingleton<IFavoritesService, SwitchingFavoritesService>();
+        services.AddSingleton<IReportService, SwitchingReportService>();
+        services.AddSingleton<IAdminService, SwitchingAdminService>();
         return services;
     }
 

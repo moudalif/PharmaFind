@@ -3,3 +3,7 @@ obj/
 *.Backup.tmp
 *.pro.Backup.tmp
 .vs/
+*.db
+*.db-shm
+*.db-wal
+TestResults/

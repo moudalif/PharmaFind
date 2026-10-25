@@ -27,59 +27,59 @@
                     <Label Text="Trouvez votre médicament dans une pharmacie proche" TextColor="White" FontSize="22" FontAttributes="Bold" />
                 </VerticalStackLayout>
 
-                <!-- Fausse barre de recherche : ouvre l'écran de recherche -->
-                <Border Grid.Row="2" BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="14,0" HeightRequest="52"
-                        SemanticProperties.Description="Rechercher un médicament">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding OpenSearchCommand}" />
-                    </Border.GestureRecognizers>
-                    <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
-                        <Image Source="ic_search.png" Style="{StaticResource ListIcon}" />
-                        <Label Text="Nom du médicament ou DCI…" TextColor="{StaticResource TextMuted}" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                </Border>
+                <!-- Barre de recherche : ouvre l'écran de recherche -->
+                <Grid Grid.Row="2" HeightRequest="52">
+                    <Border BackgroundColor="White" StrokeThickness="0" StrokeShape="RoundRectangle 14" Padding="14,0"
+                            SemanticProperties.Description="Rechercher un médicament">
+                        <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                            <Image Source="ic_search.png" Style="{StaticResource ListIcon}" />
+                            <Label Text="Nom du médicament ou DCI…" TextColor="{StaticResource TextMuted}" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
+                    <Button BackgroundColor="Transparent" Command="{Binding OpenSearchCommand}" />
+                </Grid>
 
                 <!-- Position -->
-                <Border Grid.Row="3" BackgroundColor="#1A9A6E" StrokeThickness="0" StrokeShape="RoundRectangle 18" Padding="12,8" HorizontalOptions="Start">
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding ChooseLocationCommand}" />
-                    </Border.GestureRecognizers>
-                    <HorizontalStackLayout Spacing="8">
-                        <Image Source="ic_location_white.png" WidthRequest="16" HeightRequest="16" />
-                        <Label Text="{Binding Search.LocationLabel}" TextColor="White" FontSize="14" VerticalOptions="Center" />
-                        <Label Text="Modifier" TextColor="#D1FAE5" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
-                </Border>
+                <Grid Grid.Row="3" HorizontalOptions="Start">
+                    <Border BackgroundColor="#1A9A6E" StrokeThickness="0" StrokeShape="RoundRectangle 18" Padding="12,8">
+                        <HorizontalStackLayout Spacing="8">
+                            <Image Source="ic_location_white.png" WidthRequest="16" HeightRequest="16" />
+                            <Label Text="{Binding Search.LocationLabel}" TextColor="White" FontSize="14" VerticalOptions="Center" />
+                            <Label Text="Modifier" TextColor="#D1FAE5" FontSize="13" FontAttributes="Bold" VerticalOptions="Center" />
+                        </HorizontalStackLayout>
+                    </Border>
+                    <Button BackgroundColor="Transparent" Command="{Binding ChooseLocationCommand}" />
+                </Grid>
             </Grid>
 
             <VerticalStackLayout Padding="16,20,16,24" Spacing="20">
 
                 <!-- Accès rapides -->
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                    <Border Style="{StaticResource CardTight}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding OpenMapCommand}" />
-                        </Border.GestureRecognizers>
-                        <VerticalStackLayout Spacing="8">
-                            <Border Style="{StaticResource IconCircle}">
-                                <Image Source="tab_map.png" />
-                            </Border>
-                            <Label Text="Carte des pharmacies" Style="{StaticResource H3}" FontSize="15" />
-                            <Label Text="Autour de vous" Style="{StaticResource Caption}" />
-                        </VerticalStackLayout>
-                    </Border>
-                    <Border Grid.Column="1" Style="{StaticResource CardTight}">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding OpenHistoryCommand}" />
-                        </Border.GestureRecognizers>
-                        <VerticalStackLayout Spacing="8">
-                            <Border Style="{StaticResource IconCircle}" BackgroundColor="{StaticResource SecondaryLight}">
-                                <Image Source="ic_history.png" />
-                            </Border>
-                            <Label Text="Mes recherches" Style="{StaticResource H3}" FontSize="15" />
-                            <Label Text="Historique" Style="{StaticResource Caption}" />
-                        </VerticalStackLayout>
-                    </Border>
+                    <Grid>
+                        <Border Style="{StaticResource CardTight}">
+                            <VerticalStackLayout Spacing="8">
+                                <Border Style="{StaticResource IconCircle}">
+                                    <Image Source="tab_map.png" />
+                                </Border>
+                                <Label Text="Carte des pharmacies" Style="{StaticResource H3}" FontSize="15" />
+                                <Label Text="Autour de vous" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Button BackgroundColor="Transparent" Command="{Binding OpenMapCommand}" />
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Border Style="{StaticResource CardTight}">
+                            <VerticalStackLayout Spacing="8">
+                                <Border Style="{StaticResource IconCircle}" BackgroundColor="{StaticResource SecondaryLight}">
+                                    <Image Source="ic_history.png" />
+                                </Border>
+                                <Label Text="Mes recherches" Style="{StaticResource H3}" FontSize="15" />
+                                <Label Text="Historique" Style="{StaticResource Caption}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Button BackgroundColor="Transparent" Command="{Binding OpenHistoryCommand}" />
+                    </Grid>
                 </Grid>
 
                 <!-- Recherches récentes -->
@@ -123,7 +123,7 @@
                                             <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=SelectMedicineCommand}"
                                                                   CommandParameter="{Binding .}" />
                                         </Border.GestureRecognizers>
-                                        <VerticalStackLayout Spacing="6">
+                                        <VerticalStackLayout Spacing="6" InputTransparent="True">
                                             <Border Style="{StaticResource IconCircle}" WidthRequest="36" HeightRequest="36" Padding="8">
                                                 <Image Source="ic_pill.png" />
                                             </Border>

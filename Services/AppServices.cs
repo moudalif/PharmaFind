@@ -36,7 +36,7 @@ public class DialogService : IDialogService
 public class NetworkService(DemoSettings demo) : INetworkService
 {
     public bool IsConnected =>
-        !demo.SimulateOffline && Connectivity.Current.NetworkAccess == NetworkAccess.Internet;
+        !demo.SimulateOffline && (Connectivity.Current.NetworkAccess is NetworkAccess.Internet or NetworkAccess.ConstrainedInternet or NetworkAccess.Local || demo.UseRemoteApi);
 }
 
 /// <summary>Options de démonstration (soutenance) : permettent de montrer chaque état d'écran.</summary>
@@ -44,6 +44,8 @@ public partial class DemoSettings : ObservableObject
 {
     /// <summary>Remplace la position GPS par Akwa (Douala) : l'émulateur est par défaut aux États-Unis.</summary>
     [ObservableProperty] private bool useDemoPosition = true;
+    [ObservableProperty] private bool useRemoteApi = true;
+    [ObservableProperty] private string apiBaseUrl = PharmaFind.Services.Api.ApiClient.DefaultBaseUrl;
     [ObservableProperty] private bool simulateOffline;
     [ObservableProperty] private bool simulateServerError;
     [ObservableProperty] private bool simulateSlowNetwork;
@@ -57,6 +59,20 @@ public partial class SearchContext : ObservableObject
     private UserLocation? currentLocation;
 
     [ObservableProperty] private int radiusKm = StockRules.Settings.DefaultRadiusKm;
+
+    public SearchContext(DemoSettings demo)
+    {
+        if (demo.UseDemoPosition)
+        {
+            CurrentLocation = new UserLocation
+            {
+                Latitude = 4.0500,
+                Longitude = 9.6960,
+                Label = "Akwa (Douala)",
+                Source = LocationSource.Gps
+            };
+        }
+    }
 
     public bool HasLocation => CurrentLocation is not null;
     public string LocationLabel => CurrentLocation?.Label ?? "Position non définie";
